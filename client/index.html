@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>chatterbox</title>
+    <link rel="stylesheet" href="styles/styles.css">
+    <!-- dependencies -->
+    <script src="bower_components/jquery/jquery.min.js"></script>
+    <script src="bower_components/underscore/underscore-min.js"></script>
+    <script src="bower_components/moment/moment.js"></script>
+    <!-- your scripts -->
+    <script src="env/config.js"></script>
+    <script src="scripts/app.js"></script>
+    <script>
+    $(function() {
+        app.init();
+    });
+    </script>
+</head>
+
+<body>
+    <div id="main">
+        <h1>chatterbox</h1>
+        <form id="send">
+            <input type="text" id="message">
+            <input class="submit" type="submit" value="Submit" />
+            <hr>
+            <select id="roomSelect">
+                <option value="__newroom">New Room...</option>
+                <option value="null" selected>Super Lobby</option>
+            </select>
+        </form>
+        <ul id="friendList"></ul>
+        <button id="refreshMessages">Refresh</button>
+        <!-- Your HTML goes here! -->
+        <img id="spiffyGif" class="spinner" src="images/spiffygif_46x46.gif">
+        <div id="chats">
+        </div>
+    </div>
+</body>
+
+</html>
