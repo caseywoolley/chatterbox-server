@@ -38,7 +38,7 @@ $(function() {
   };
 
   app = {
-    server: 'https://api.parse.com/1/classes/chatterbox',
+    server: 'http://127.0.0.1:3000/',
     currentUsername: searchParams().username,
     currentRooms: {},
     messages: [],
@@ -70,7 +70,7 @@ $(function() {
     app.$roomSelect.on('change', app.changeRooms);
     app.$addNewRoom.on('click', app.addRoom);
 
-    setInterval(app.fetch, 5000);
+    //setInterval(app.fetch, 5000);
   };
 
   // Posts a messsage to the server
@@ -96,7 +96,7 @@ $(function() {
       url: app.server,
       type: 'GET',
       contentType: 'application/json',
-      data : { order : '-createdAt' },
+      //data : { order : '-createdAt' },
       success: function(data) {
         // Results array from Data object
         app.messages = data.results;
