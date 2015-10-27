@@ -12,6 +12,8 @@ this file and include it in basic-server.js so that it actually works.
 
 **************************************************************/
 
+var database = { messages: []};
+
 var requestHandler = function(request, response) {
   // Request and Response come from node's http module.
   //
@@ -27,37 +29,86 @@ var requestHandler = function(request, response) {
   // Adding more logging to your server can be an easy way to get passive
   // debugging help, but you should always be careful about leaving stray
   // console.logs in your code.
-  console.log("Serving request type " + request.method + " for url " + request.url + " request Object " + request);
+  console.log("Serving request type " + request.method + " for url " + request.url + " request Object " + request.ClientRequest);
+  
+  // routing method
+ 
+    // if URL does not exist - 404    
+ 
+    // if Get - respond with 200 OK
+      // read the file associated with this method
+      // write that file's contents to the response body
+      // send it back
+      // respond with a confirmation message
 
-  //routing method
-    //Get - 200
-    //POST - 201
-  //build response header
-  //build response body
-
-
-  // The outgoing status.
-  var statusCode = 200;
-
-  if (request.method === 'POST'){
-    statusCode = 201;
-  }
+    // if POST - respond with 201
+      // write the request data to the appropriate file
+      // respond with a confirmation message
 
   // See the note below about CORS headers.
   var headers = defaultCorsHeaders;
+  //var body = { results: [] };
+    
+  // The outgoing status.
+  var statusCode = 200;
+  var data = '';
+  var re = /^\/classes/g;
+  headers['Content-Type'] = "application/json";
+
+  if (re.test(request.url)){
+
+
+    if (request.method === 'POST'){
+      statusCode = 201;
+      request.on('data', function(chunk) {
+        data += chunk.toString();
+      });
+      request.on('end', function() {
+        var body = { results: [] };
+        //console.log(data);
+        data = JSON.parse(data);
+        //console.log(data.message);
+
+        if (database[request.url] === undefined){
+          database[request.url] = [];
+        }
+        database[request.url].push(data);
+        body.results.push(database[request.url]);
+        response.writeHead(statusCode, headers);
+        body = JSON.stringify(body);
+        response.end(body);
+      });
+    } else if (request.method === 'GET') {
+      statusCode = 200;
+      response.writeHead(statusCode, headers);
+      var body = { results: [] };
+      //body = JSON.stringify(body);
+      //console.log(database[request.url]);
+      if (database[request.url]) {
+        body.results = database[request.url];
+      }
+      
+      body = JSON.stringify(body);
+      response.end(body);
+    }
+
+  } else {
+    statusCode = 404;
+    response.writeHead(statusCode, headers);
+    var body = { results: [] };
+    body = JSON.stringify(body);
+    response.end(body);
+  }
+
+  
 
   // Tell the client we are sending them plain text.
   //
   // You will need to change this if you are sending something
   // other than plain text, like JSON or HTML.
-  headers['Content-Type'] = "application/json";
 
   // .writeHead() writes to the request line and headers of the response,
   // which includes the status and all headers.
-  response.writeHead(statusCode, headers);
-
-  var body = { results: [request] };
-  body = JSON.stringify(body);
 
   // Make sure to always call response.end() - Node may not send
   // anything back to the client until you do. The string you pass to
@@ -66,7 +117,6 @@ var requestHandler = function(request, response) {
   //
   // Calling .end "flushes" the response's internal buffer, forcing
   // node to actually send all the data over to the client.
-  response.end(body);
 };
 
 // These headers will allow Cross-Origin Resource Sharing (CORS).
