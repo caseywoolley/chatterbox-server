@@ -38,7 +38,7 @@ $(function() {
   };
 
   app = {
-    server: 'http://127.0.0.1:3000/',
+    server: 'http://127.0.0.1:3000/classes/',
     currentUsername: searchParams().username,
     currentRooms: {},
     messages: [],
